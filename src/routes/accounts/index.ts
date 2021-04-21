@@ -29,6 +29,13 @@ router.get('/', async (req, res) => {
   }
 });
 
+router.get('/email/:email', async (req, res) => {
+  const controller = new AccountController();
+  const response = await controller.getAccountByEmail(req.params.email);
+  if (!response) res.status(404).send({ message: 'No account found' });
+  return res.status(httpStatus.OK).send(response);
+});
+
 router.get('/:id', async (req, res) => {
   const controller = new AccountController();
   const response = await controller.getAccount(req.params.id);

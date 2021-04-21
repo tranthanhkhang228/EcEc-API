@@ -30,7 +30,18 @@ const getAccounts = async (): Promise<Array<Student>> => {
 
 const getAccount = async (id: number): Promise<Account | null> => {
   const accountRepository = getRepository(Account);
-  const account = await accountRepository.findOne({ id: id });
+  const account = await accountRepository.findOne({ id });
+  if (!account) return null;
+  return account;
+};
+
+const getAccountByEmail = async (email: string): Promise<Student | null> => {
+  const account = await getRepository(Student)
+    .createQueryBuilder('student')
+    .leftJoinAndSelect('student.account', 'account')
+    .where('account.email = :email', { email })
+    .getOne();
+
   if (!account) return null;
   return account;
 };
@@ -104,5 +115,6 @@ export default {
   getAccount,
   createAccount,
   deleteAccount,
-  updateAccount
+  updateAccount,
+  getAccountByEmail
 };

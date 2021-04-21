@@ -24,6 +24,18 @@ router.get('/:id', async (req, res) => {
   return res.status(httpStatus.OK).send(response);
 });
 
+router.post('/', async (req, res) => {
+  try {
+    const controller = new JourneyController();
+    await controller.createResult(req.body);
+    res.status(httpStatus.CREATED).send();
+  } catch (error) {
+    return res
+      .status(httpStatus.INTERNAL_SERVER_ERROR)
+      .send({ message: error.message, detail: error.detail });
+  }
+});
+
 // router.put('/', async (req, res) => {
 //   const controller = new StageController();
 //   try {

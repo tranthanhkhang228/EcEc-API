@@ -30,6 +30,14 @@ export default class AccountController {
     return accountService.getAccount(id);
   }
 
+  @Get('/email/:email')
+  public async getAccountByEmail(
+    @Path() email: string
+  ): Promise<Student | null> {
+    const accountService = new AccountService();
+    return accountService.getAccountByEmail(email);
+  }
+
   @Put('/')
   public async updateAccount(@Body() body: IStudent): Promise<Student | null> {
     const accountService = new AccountService();

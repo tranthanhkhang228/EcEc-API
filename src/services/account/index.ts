@@ -21,6 +21,10 @@ export default class AccountService {
     return AccountRepo.getAccount(Number(id));
   }
 
+  public async getAccountByEmail(email: string): Promise<Student | null> {
+    return AccountRepo.getAccountByEmail(email);
+  }
+
   public async updateAccount(body: IStudent): Promise<Student | null> {
     try {
       const account = AccountRepo.updateAccount(body);

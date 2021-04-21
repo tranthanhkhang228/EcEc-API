@@ -15,7 +15,11 @@ export class Result {
   @Column({ type: 'decimal', nullable: false })
   point!: number;
 
-  @Column({ name: 'complete_time', type: 'date', nullable: false })
+  @Column({
+    name: 'complete_time',
+    type: 'timestamp without time zone',
+    nullable: false
+  })
   completeTime!: Date;
 
   @ManyToOne(() => StageContent, (stageContent) => stageContent.results, {

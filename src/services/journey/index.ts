@@ -1,5 +1,6 @@
 import { Journey } from '../../models';
 import { JourneyRepo } from '../../repositories';
+import { IResult } from '../../repositories/journey';
 
 export default class JourneyService {
   public async getJourneys(): Promise<Array<Journey>> {
@@ -10,6 +11,9 @@ export default class JourneyService {
     return JourneyRepo.getJourney(Number(id));
   }
 
+  public async createResult(result: IResult): Promise<void> {
+    JourneyRepo.createResult(result);
+  }
   //   public async update(body: IStudent): Promise<Stage | null> {
   //     try {
   //       const account = StageRepo.updateAccount(body);

@@ -29,8 +29,8 @@ export class Journey {
   @ManyToMany(() => Result, { cascade: true })
   @JoinTable({
     name: 'journey_result',
-    joinColumns: [{ name: 'result_id', referencedColumnName: 'id' }],
-    inverseJoinColumns: [{ name: 'journey_id', referencedColumnName: 'id' }]
+    joinColumns: [{ name: 'journey_id', referencedColumnName: 'id' }],
+    inverseJoinColumns: [{ name: 'result_id', referencedColumnName: 'id' }]
   })
   results!: Result[];
 }

@@ -1,6 +1,6 @@
 import { Get, Route, Tags, Post, Body, Path, Delete, Put } from 'tsoa';
 import { Journey } from '../../models';
-import { IStage } from '../../repositories/stage';
+import { IResult } from '../../repositories/journey';
 import { JourneyService } from '../../services';
 
 @Route('journeys')
@@ -16,6 +16,12 @@ export default class JourneyController {
   public async getJourney(@Path() id: string): Promise<Journey | null> {
     const service = new JourneyService();
     return service.getJourney(id);
+  }
+
+  @Post('/')
+  public async createResult(@Body() result: IResult): Promise<void> {
+    const service = new JourneyService();
+    service.createResult(result);
   }
 
   //   @Put('/')

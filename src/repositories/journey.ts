@@ -9,20 +9,31 @@ export interface IResult {
 }
 
 const getJourneys = async (): Promise<Array<Journey>> => {
+  console.log('run get all');
   const journeys = await getRepository(Journey)
     .createQueryBuilder('journey')
+    .leftJoinAndSelect('journey.account', 'account')
     .leftJoinAndSelect('journey.results', 'results')
+    .leftJoinAndSelect('results.stageContent', 'stageContent')
+    .leftJoinAndSelect('stageContent.games', 'game')
+    .leftJoinAndSelect('stageContent.stages', 'stage')
     .getMany();
 
-  //   const account = await accountRepository.find({ relations: ['account'] });
   return journeys;
 };
 
 const getJourney = async (id: number): Promise<Journey | null> => {
-  const accountRepository = getRepository(Journey);
-  const account = await accountRepository.findOne({ id: id });
-  if (!account) return null;
-  return account;
+  const journey = await getRepository(Journey)
+    .createQueryBuilder('journey')
+    .leftJoinAndSelect('journey.account', 'account')
+    .leftJoinAndSelect('journey.results', 'results')
+    .leftJoinAndSelect('results.stageContent', 'stageContent')
+    .leftJoinAndSelect('stageContent.games', 'game')
+    .leftJoinAndSelect('stageContent.stages', 'stage')
+    .where('account.id = :id', { id })
+    .getOne();
+  if (!journey) return null;
+  return journey;
 };
 
 const createResult = async (payload: IResult): Promise<void> => {
@@ -32,13 +43,22 @@ const createResult = async (payload: IResult): Promise<void> => {
 
   const journeyRepo = getRepository(Journey);
 
-  const journey = await journeyRepo.findOne({
-    id: payload.journeyID
-  });
+  const journey = await journeyRepo
+    .createQueryBuilder('journey')
+    .leftJoinAndSelect('journey.results', 'results')
+    .leftJoinAndSelect('results.stageContent', 'stageContent')
+    .leftJoinAndSelect('stageContent.games', 'game')
+    .leftJoinAndSelect('stageContent.stages', 'stage')
+    .where('journey.id = :id', { id: payload.journeyID })
+    .getOne();
 
   if (!stageContent || !journey) {
     throw new Error("This request couldn't be performed!");
   }
+
+  const a = journey.results.findIndex(
+    (item) => item.stageContent.id === payload.stageContentID
+  );
 
   const result = new Result();
   result.point = payload.point;
@@ -47,8 +67,13 @@ const createResult = async (payload: IResult): Promise<void> => {
 
   await getRepository(Result).save(result);
 
-  journey.results = [...journey.results, { ...result }];
-
+  if (a === -1) {
+    journey.results.push(result);
+  } else {
+    journey.results = journey.results.map((item) =>
+      item.stageContent.id !== payload.stageContentID ? item : result
+    );
+  }
   await journeyRepo.save(journey);
 };
 
